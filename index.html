@@ -5,9 +5,9 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171513;--card:#211f1c;--tx:#f0ece6;--mu:#a39d94;--bd:#37332e;--ac:#e08a5e;--ok:#6cc28b;--bar:#3a342e}}
 :root[data-theme="dark"]{--bg:#171513;--card:#211f1c;--tx:#f0ece6;--mu:#a39d94;--bd:#37332e;--ac:#e08a5e;--ok:#6cc28b;--bar:#3a342e}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:760px;margin:0 auto;padding:14px 14px 80px}
+main{max-width:1280px;margin:0 auto;padding:16px 16px 90px}
 h1{font-size:20px;margin:0}h2{font-size:16px;margin:0 0 8px}.mu{color:var(--mu);font-size:13px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:12px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin:0;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .big{font-size:34px;font-weight:700;color:var(--ac);line-height:1}
 .bar{height:8px;background:var(--bar);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}.bar i.ok{background:var(--ok)}
@@ -19,16 +19,27 @@ input[type=number]{width:80px;text-align:center}
 .btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:9px 14px;cursor:pointer}.btn.g{background:none;border:1px solid var(--bd);color:var(--tx)}
 .chk{display:flex;gap:8px;align-items:center;padding:5px 0}.chk input{width:18px;height:18px;accent-color:var(--ac)}
 .bars{display:flex;gap:4px;align-items:flex-end;height:70px}.bars div{flex:1;background:var(--bar);border-radius:3px 3px 0 0;min-height:2px}.bars div.ok{background:var(--ok)}
-details{border-top:1px solid var(--bd);padding:8px 0}summary{cursor:pointer;font-weight:600}
+details{padding:0}summary{cursor:pointer;font-weight:600}
 .t{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:5px 0;font-size:14px}.t label{display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--mu)}.t input{width:18px;height:18px;accent-color:var(--ac)}
 .pill{display:inline-block;border:1px solid var(--bd);border-radius:20px;padding:2px 9px;font-size:12px;color:var(--mu)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .scroll{overflow-x:auto}
+h1{font-size:22px}h2{font-size:17px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#acct{margin:12px 0}
+#app{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:14px;align-items:start}
+.wide{grid-column:1/-1}
+.hero{background:linear-gradient(135deg,var(--card),var(--bar))}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.mg>div{border:1px solid var(--bd);border-radius:10px;padding:12px}
+.bars{height:90px}
+@media(max-width:640px){.stats{grid-template-columns:1fr 1fr}.big{font-size:28px}}
+@media(min-width:900px){nav{position:static;border:0;background:none;padding:0;width:auto}nav button{flex:none;padding:8px 18px;border-radius:8px;font-size:14px}nav button.on{background:var(--bar)}main{padding:20px 28px 40px}}
 </style></head><body><main>
-<div class="row"><h1>UPSC Prelims 2027</h1><button class="btn g" id="th">Theme</button></div>
+<header class="top"><h1>🎯 UPSC Prelims 2027</h1><nav><button data-t="today">Today</button><button data-t="syl">Syllabus</button><button data-t="plan">Plan</button><button data-t="mock">Mocks</button></nav><button class="btn g" id="th">Theme</button></header>
 <div class="mu">Tracker for the 23 May 2027 attempt. GS Paper I (200) + CSAT (qualifying, 33%). Confirm the syllabus against the official notification (due 13 Jan 2027, upsc.gov.in).</div>
 <div id="acct" class="card"></div><div id="app"></div></main>
-<nav><button data-t="today">Today</button><button data-t="syl">Syllabus</button><button data-t="plan">Plan</button><button data-t="mock">Mocks</button></nav>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const $=s=>document.querySelector(s),K='upsc27';
@@ -64,7 +75,8 @@ function curSub(){const t=today(),w=SUB.filter(s=>s.w);return w.find(s=>t>=s.s&&
 function streak(){let n=0,d=new Date();if(hrs(dk(d))<8)d.setDate(d.getDate()-1);while(hrs(dk(d))>=8){n++;d.setDate(d.getDate()-1)}return n}
 function vToday(){
 const t=today(),left=diff(t,EXAM),ph=phase(cur),d=day(cur),tot=hrs(cur),cs=curSub();
-let h=`<div class="card"><div class="row"><div><div class="big">${left}</div><div class="mu">days to Prelims · ${(left/7).toFixed(1)} weeks · 23 May 2027</div></div><div style="text-align:right"><b>${ph[0]}</b><div class="mu" style="max-width:260px">${ph[3]}</div></div></div></div>`;
+const dc=ALL.filter(x=>S.t[x.id]&&S.t[x.id].d).length;
+let h=`<div class="card wide hero"><div class="stats"><div><div class="big">${left}</div><div class="mu">days to Prelims · ${(left/7).toFixed(1)} weeks</div></div><div><div class="big">${tot}h</div><div class="mu">logged ${cur===t?'today':cur}</div></div><div><div class="big">${streak()}</div><div class="mu">day streak (8h+)</div></div><div><div class="big">${pct(dc,ALL.length)}%</div><div class="mu">syllabus first pass</div></div></div><div style="margin-top:14px"><b>${ph[0]}</b> <span class="mu">${ph[3]}</span></div></div>`;
 h+=`<div class="card"><div class="row"><h2>Daily log</h2><input type="date" id="dt" value="${cur}" style="width:auto"></div><div class="mu">Targets for this phase (hours). Aim for 8–10 total, gym sits outside this.</div>`;
 CATS.forEach((c,i)=>{h+=`<div class="row" style="padding:6px 0"><span>${c[1]} <span class="pill">target ${ph[4][i]}h</span></span><input type="number" step="0.5" min="0" max="14" data-h="${c[0]}" value="${d.h[c[0]]||''}" placeholder="0"></div>`});
 h+=`<div class="row" style="margin-top:6px"><b>Total ${tot}h</b><span class="mu">${tot>=8?'Target hit ✓':'Need '+(8-tot).toFixed(1)+'h more for 8h'}</span></div>${bar(pct(tot,10),tot>=8?'ok':'')}`;
@@ -73,22 +85,22 @@ if(cs){const pend=ALL.filter(x=>x.sub===cs&&!(S.t[x.id]&&S.t[x.id].d)),dl=Math.m
 h+=`<div class="card"><h2>Current block: ${cs.n}</h2><div class="mu">${cs.s} to ${cs.e} · ${pend.length} topics left · ${dl} days left in block${pend.length&&dl?' · about '+(pend.length/dl).toFixed(1)+' topics/day':''}${pend.length&&!dl?' · behind schedule, carry forward':''}</div><ul>`+(pend.slice(0,3).map(x=>`<li>${x.n}</li>`).join('')||'<li>Block complete. Move to revision and MCQs.</li>')+`</ul></div>`}
 const b=[];for(let i=13;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);const k=dk(x),v=hrs(k);b.push(`<div class="${v>=8?'ok':''}" style="height:${Math.max(2,v/10*70)}px" title="${k}: ${v}h"></div>`)}
 let wk=0;for(let i=0;i<7;i++){const x=new Date();x.setDate(x.getDate()-i);wk+=hrs(dk(x))}
-return h+`<div class="card"><div class="row"><h2>Last 14 days</h2><span class="mu">Streak (8h+): ${streak()} · 7-day total ${wk}h</span></div><div class="bars">${b.join('')}</div></div>`}
+return h+`<div class="card wide"><div class="row"><h2>Last 14 days</h2><span class="mu">Streak (8h+): ${streak()} · 7-day total ${wk}h</span></div><div class="bars">${b.join('')}</div></div>`}
 function vSyl(){
 const dn_=ALL.filter(x=>S.t[x.id]&&S.t[x.id].d).length,r1=ALL.filter(x=>S.t[x.id]&&S.t[x.id].r1).length;
-let h=`<div class="card"><h2>Syllabus progress</h2><div class="mu">First pass ${dn_}/${ALL.length} · Revision 1 ${r1}/${ALL.length}</div>${bar(pct(dn_,ALL.length),'ok')}<div style="height:6px"></div>${bar(pct(r1,ALL.length))}</div><div class="card" style="padding:4px 14px">`;
+let h=`<div class="card wide"><h2>Syllabus progress</h2><div class="mu">First pass ${dn_}/${ALL.length} · Revision 1 ${r1}/${ALL.length}</div>${bar(pct(dn_,ALL.length),'ok')}<div style="height:6px"></div>${bar(pct(r1,ALL.length))}</div>`;
 SUB.forEach(s=>{const ts=ALL.filter(x=>x.sub===s),d=ts.filter(x=>S.t[x.id]&&S.t[x.id].d).length;
-h+=`<details data-o="${s.id}" ${open[s.id]?'open':''}><summary>${s.n} <span class="pill">${d}/${ts.length}</span>${s.w?` <span class="mu">${s.s.slice(5)} → ${s.e.slice(5)}</span>`:''}</summary>`+ts.map(x=>{const v=S.t[x.id]||{};return `<div class="t"><span>${x.n}</span>${[['d','Done'],['r1','R1'],['r2','R2']].map(f=>`<label>${f[1]}<input type="checkbox" data-tp="${x.id}" data-f="${f[0]}" ${v[f[0]]?'checked':''}></label>`).join('')}</div>`}).join('')+`</details>`});
-return h+`</div>`}
+h+=`<div class="card"><details data-o="${s.id}" ${open[s.id]?'open':''}><summary>${s.n} <span class="pill">${d}/${ts.length}</span>${s.w?` <span class="mu">${s.s.slice(5)} → ${s.e.slice(5)}</span>`:''}<div style="margin:8px 0">${bar(pct(d,ts.length),'ok')}</div></summary>`+ts.map(x=>{const v=S.t[x.id]||{};return `<div class="t"><span>${x.n}</span>${[['d','Done'],['r1','R1'],['r2','R2']].map(f=>`<label>${f[1]}<input type="checkbox" data-tp="${x.id}" data-f="${f[0]}" ${v[f[0]]?'checked':''}></label>`).join('')}</div>`}).join('')+`</details></div>`});
+return h}
 function vPlan(){
 let h=PH.map(p=>`<div class="card"><h2>${p[0]}</h2><div class="mu">${p[1]} to ${p[2]}</div><p>${p[3]}</p><div class="mu">Daily split (h): ${CATS.map((c,i)=>c[1]+' '+p[4][i]).join(' · ')}</div></div>`).join('');
-h+=`<div class="card"><h2>Monthly targets</h2>`;
+h+=`<div class="card wide"><h2>Monthly targets</h2><div class="mg">`;
 MON.forEach(m=>{const f=P(m[0]+'-01'),l=new Date(f.getFullYear(),f.getMonth()+1,0),a=m[0]==='2026-11'?'2026-11-09':dk(f),z=m[0]==='2027-05'?'2027-05-22':dk(l),dd=dn(a,z),ht=dd*8;
 let hl=0;for(let i=0;i<dd;i++){const x=P(a);x.setDate(x.getDate()+i);hl+=hrs(dk(x))}
 let ex=0;SUB.filter(s=>s.w).forEach(s=>{const o=Math.min(z,s.e)>=Math.max(a,s.s)?dn(Math.max(a,s.s),Math.min(z,s.e)):0;ex+=s.t.length*o/dn(s.s,s.e)});
 const td=ALL.filter(x=>S.t[x.id]&&S.t[x.id].d&&S.t[x.id].d.startsWith(m[0])).length,mk=S.mocks.filter(x=>x.d.startsWith(m[0])).length;
-h+=`<div style="border-top:1px solid var(--bd);padding:10px 0"><b>${m[1]}</b> <span class="mu">${m[2]}</span><div class="g2" style="margin-top:6px"><div class="mu">Hours ${Math.round(hl)}/${ht}${bar(pct(hl,ht),hl>=ht?'ok':'')}</div><div class="mu">Topics ${td}/${Math.round(ex)}${bar(pct(td,ex))}</div></div><div class="mu" style="margin-top:4px">Mocks/tests logged ${mk} of ${m[3]} planned</div></div>`});
-h+=`</div><div class="card"><h2>Backup</h2><div class="mu">Data lives in this browser only. Copy this text to back up; paste a saved copy below and press Restore to move to another device.</div><textarea id="ex" rows="3">${esc(JSON.stringify(S))}</textarea><div class="row" style="margin-top:8px"><span class="mu">Paste replaces everything</span><button class="btn g" id="im">Restore from text</button></div></div>`;
+h+=`<div><b>${m[1]}</b> <span class="mu">${m[2]}</span><div class="g2" style="margin-top:6px"><div class="mu">Hours ${Math.round(hl)}/${ht}${bar(pct(hl,ht),hl>=ht?'ok':'')}</div><div class="mu">Topics ${td}/${Math.round(ex)}${bar(pct(td,ex))}</div></div><div class="mu" style="margin-top:4px">Mocks/tests logged ${mk} of ${m[3]} planned</div></div>`});
+h+=`</div></div><div class="card wide"><h2>Backup</h2><div class="mu">Data lives in this browser only. Copy this text to back up; paste a saved copy below and press Restore to move to another device.</div><textarea id="ex" rows="3">${esc(JSON.stringify(S))}</textarea><div class="row" style="margin-top:8px"><span class="mu">Paste replaces everything</span><button class="btn g" id="im">Restore from text</button></div></div>`;
 return h}
 const sc=m=>{const cs=m.t==='CSAT',q=cs?2.5:2,n=cs?2.5/3:2/3;return Math.round((m.c*q-m.w*n)*10)/10};
 function vMock(){
@@ -112,7 +124,7 @@ else if('n'in d){day(cur).n=t.value;save()}
 else if(d.tp){const v=S.t[d.tp]||(S.t[d.tp]={});if(t.checked)v[d.f]=today();else delete v[d.f];save();render()}});
 document.addEventListener('toggle',e=>{const o=e.target.dataset&&e.target.dataset.o;if(o)open[o]=e.target.open},true);
 /* ---- Supabase sync: paste your project URL and publishable (anon) key ---- */
-const SB_URL='https://iwxeqlstnsjzwwaagvfy.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eGVxbHN0bnNqend3YWFndmZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyODgyMjcsImV4cCI6MjEwOTg2NDIyN30.KONxn1i6b3q705QjFpibQ4dY9L_VHLVg8fSLMBep9vE';
+const SB_URL='YOUR_SUPABASE_URL',SB_KEY='YOUR_SUPABASE_PUBLISHABLE_KEY';
 let sb=null,user=null,tm,syncMsg='Not signed in';
 if(window.supabase&&!SB_URL.startsWith('YOUR_'))sb=supabase.createClient(SB_URL,SB_KEY);
 function queue(){if(!sb||!user)return;clearTimeout(tm);tm=setTimeout(push,1200)}
