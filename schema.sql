@@ -1,0 +1,16 @@
+-- Run once in Supabase: SQL Editor > New query > Run
+create table if not exists public.tracker_state (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.tracker_state enable row level security;
+
+create policy "read own state" on public.tracker_state
+  for select using ((select auth.uid()) = user_id);
+create policy "insert own state" on public.tracker_state
+  for insert with check ((select auth.uid()) = user_id);
+create policy "update own state" on public.tracker_state
+  for update using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
