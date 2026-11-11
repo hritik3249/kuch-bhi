@@ -124,7 +124,7 @@ else if('n'in d){day(cur).n=t.value;save()}
 else if(d.tp){const v=S.t[d.tp]||(S.t[d.tp]={});if(t.checked)v[d.f]=today();else delete v[d.f];save();render()}});
 document.addEventListener('toggle',e=>{const o=e.target.dataset&&e.target.dataset.o;if(o)open[o]=e.target.open},true);
 /* ---- Supabase sync: paste your project URL and publishable (anon) key ---- */
-const SB_URL='YOUR_SUPABASE_URL',SB_KEY='YOUR_SUPABASE_PUBLISHABLE_KEY';
+const SB_URL='https://iwxeqlstnsjzwwaagvfy.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eGVxbHN0bnNqend3YWFndmZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyODgyMjcsImV4cCI6MjEwOTg2NDIyN30.KONxn1i6b3q705QjFpibQ4dY9L_VHLVg8fSLMBep9vE';
 let sb=null,user=null,tm,syncMsg='Not signed in';
 if(window.supabase&&!SB_URL.startsWith('YOUR_'))sb=supabase.createClient(SB_URL,SB_KEY);
 function queue(){if(!sb||!user)return;clearTimeout(tm);tm=setTimeout(push,1200)}
